@@ -27,7 +27,6 @@ exports.getUser = async (req, res) => {
 
 exports.createUser = async (req, res) => {
     const { firstname, lastname, status, active } = req.body;
-
     try {
         const newUser = await User.create({ firstname, lastname, status, active });
         res.status(201).json({ user: newUser });
@@ -69,7 +68,11 @@ exports.deleteUser = async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        await user.destroy();
+        user.firstname = 'Anonyme';
+        user.lastname = 'Anonyme';
+        user.active = 0;
+        await user.save();
+
         res.status(204).json({ message: 'User deleted' });
     } catch (error) {
         res.status(500).json({ error });
