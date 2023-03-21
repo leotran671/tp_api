@@ -1,10 +1,8 @@
-const mysql = require("mysql");
+const { Sequelize } = require('sequelize');
 
-const db = mysql.createConnection({
-    host: "localhost",
-    user: "root", // nom d'utilisateur MySQL
-    password: "", // mot de passe MySQL
-    database: "tp_api", // nom de la base de données MySQL
+const sequelize = new Sequelize('tp_api', 'root', '', {
+    host: 'localhost',
+    dialect: 'mysql'
 });
 
-module.exports = db;
+module.exports = sequelize;
