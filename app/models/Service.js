@@ -1,24 +1,21 @@
 const { Model, DataTypes } = require("sequelize");
-
-module.exports = (sequelize) => {
-    class Service extends Model { }
-    Service.init(
-        {
-            id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
-            },
-            created_at: DataTypes.DATE,
-            modified_at: DataTypes.DATE,
-            shiftType: DataTypes.INTEGER,
-            shiftClosed: DataTypes.BOOLEAN,
+const sequelize = require("../config/config");
+class Service extends Model { }
+Service.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
         },
-        {
-            sequelize,
-            modelName: "Service",
-            underscored: true,
-        }
-    );
-    return Service;
-};
+        shiftType: DataTypes.INTEGER,
+        shiftClosed: DataTypes.BOOLEAN,
+    },
+    {
+        sequelize,
+        modelName: "services",
+        createdAt: "created_at",
+        updatedAt: "modified_at"
+    }
+);
+module.exports = Service;

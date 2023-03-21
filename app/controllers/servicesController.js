@@ -42,11 +42,9 @@ exports.updateService = async (req, res) => {
 
     try {
         const service = await Service.findByPk(id);
-
         if (!service) {
             return res.status(404).json({ error: 'Service not found' });
         }
-
         service.shiftType = shiftType;
         service.shiftClosed = shiftClosed;
         await service.save();
@@ -59,17 +57,14 @@ exports.updateService = async (req, res) => {
 
 exports.deleteService = async (req, res) => {
     const { id } = req.params;
-
     try {
         const service = await Service.findByPk(id);
-
         if (!service) {
             return res.status(404).json({ error: 'Service not found' });
         }
-
         await service.destroy();
         res.status(204).json({ message: 'Service deleted' });
     } catch (error) {
         res.status(500).json({ error });
     }
-};
+};  
