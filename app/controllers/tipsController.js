@@ -1,4 +1,4 @@
-const TipPayment = require('../models/TipPayment');
+const TipPayment = require('../models/TipsPayment');
 
 exports.getTips = async (req, res) => {
     try {
