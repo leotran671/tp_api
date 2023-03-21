@@ -8,13 +8,13 @@ Admin.init(
             primaryKey: true,
             autoIncrement: true,
         },
-        created_at: DataTypes.DATE,
-        modified_at: DataTypes.DATE,
         pincode: DataTypes.INTEGER,
     },
     {
         sequelize,
-        modelName: "admin"
+        modelName: "admins",
+        createdAt: "created_at",
+        updatedAt: "modified_at"
     }
 );
 module.exports = Admin;

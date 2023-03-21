@@ -3,16 +3,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 exports.createAdmin = async (req, res) => {
-    const { pincode } = req.body;
+    // const hashedPincode = bcrypt.hash(pincode, 10);
+    const newAdmin = await Admin.create({ pincode: req.body.pincode });
 
-    try {
-        const hashedPincode = await bcrypt.hash(pincode, 10);
-        const newAdmin = await Admin.create({ pincode: hashedPincode });
-
-        res.status(201).json({ admin: newAdmin });
-    } catch (error) {
-        res.status(400).json({ error });
-    }
+    res.status(201).json({ admin: newAdmin });
 };
 
 exports.login = async (req, res) => {
