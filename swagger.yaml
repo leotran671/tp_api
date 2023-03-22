@@ -1,801 +1,627 @@
-swagger: "2.0"
-info:
-  version: "1.0.0"
-  title: "Restaurant API"
-  description: "API documentation for a restaurant management system"
-basePath: "/tp_api
-schemes:
-  - "http"
-consumes:
-  - "application/json"
-produces:
-  - "application/json"
-definitions:
-  Admin:
-    type: "object"
-    required:
-      - pincode
-    properties:
-      pincode:
-        type: "string"
-        minLength: 4
-  Service:
-    type: "object"
-    required:
-      - shiftType
-      - shiftClosed
-    properties:
-      shiftType:
-        type: "string"
-      shiftClosed:
-        type: "boolean"
-  User:
-    type: "object"
-    required:
-      - firstname
-      - lastname
-      - status
-      - active
-    properties:
-      firstname:
-        type: "string"
-      lastname:
-        type: "string"
-      status:
-        type: "string"
-      active:
-        type: "boolean"
-  TableTip:
-    type: "object"
-    required:
-      - tips
-      - id_service
-      - id_restaurantTable
-    properties:
-      tips:
-        type: "number"
-      id_service:
-        type: "integer"
-      id_restaurantTable:
-        type: "integer"
-  RestaurantTable:
-    type: "object"
-    required:
-      - name
-    properties:
-      name:
-        type: "string"
-parameters:
-  serviceIdParam:
-    name: "id"
-    in: "path"
-    description: "ID of the service to fetch"
-    required: true
-    type: "integer"
-paths:
-  /admin/login:
-    post:
-      tags:
-        - "Admin"
-      summary: "Login with admin credentials"
-      description: "Authenticate an admin user and return a JWT token"
-      consumes:
-        - "application/json"
-      parameters:
-        - name: "body"
-          in: "body"
-          description: "Admin credentials for login"
-          required: true
-          schema:
-            type: "object"
-            properties:
-              pincode:
-                type: "string"
-                minLength: 4
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "OK"
-          schema:
-            type: "object"
-            properties:
-              token:
-                type: "string"
-            example:
-              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        "400":
-          description: "Bad Request"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Invalid pincode"
-        "404":
-          description: "Not Found"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Admin not found"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-  /services:
-    get:
-      tags:
-        - "Services"
-      summary: "Get all services"
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "OK"
-          schema:
-            type: "object"
-            properties:
-              services:
-                type: "array"
-                items:
-                  $ref: "#/definitions/Service"
-            example:
-              services:
-                - shiftType: "morning"
-                  shiftClosed: false
-                - shiftType: "evening"
-                  shiftClosed: true
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-    post:
-      tags:
-        - "Services"
-      summary: "Create a new service"
-      consumes:
-        - "application/json"
-      parameters:
-        - name: "body"
-          in: "body"
-          description: "Service object that needs to be added to the system"
-          required: true
-          schema:
-            $ref: "#/definitions/Service"
-      produces:
-        - "application/json"
-      responses:
-        "201":
-          description: "Created"
-          schema:
-            type: "object"
-            properties:
-              service:
-                $ref: "#/definitions/Service"
-            example:
-              service:
-                shiftType: "evening"
-                shiftClosed: true
-        "400":
-          description: "Bad Request"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Bad Request"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-  /services/{id}:
-    get:
-      tags:
-        - "Services"
-      summary: "Get a service by ID"
-      parameters:
-        - $ref: "#/parameters/serviceIdParam"
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "OK"
-          schema:
-            type: "object"
-            properties:
-              service:
-                $ref: "#/definitions/Service"
-            example:
-              service:
-                shiftType: "evening"
-                shiftClosed: true
-        "404":
-          description: "Not Found"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Service not found"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-    put:
-      tags:
-        - "Services"
-      summary: "Update a service by ID"
-      consumes:
-        - "application/json"
-      parameters:
-        - $ref: "#/parameters/serviceIdParam"
-        - name: "body"
-          in: "body"
-          description: "Service object that needs to be updated in the system"
-          required: true
-          schema:
-            $ref: "#/definitions/Service"
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "OK"
-          schema:
-            type: "object"
-            properties:
-              service:
-                $ref: "#/definitions/Service"
-            example:
-              service:
-                shiftType: "evening"
-                shiftClosed: true
-        "400":
-          description: "Bad Request"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Bad Request"
-        "404":
-          description: "Not Found"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Service not found"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-    delete:
-      tags:
-        - "Services"
-      summary: "Delete a service by ID"
-      parameters:
-        - $ref: "#/parameters/serviceIdParam"
-      produces:
-        - "application/json"
-      responses:
-        "204":
-          description: "No Content"
-          schema:
-            type: "object"
-            properties:
-              message:
-                type: "string"
-            example:
-              message: "Service deleted"
-        "404":
-          description: "Not Found"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Service not found"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-  /tips:
-    get:
-      tags:
-        - "Tips"
-      summary: "Get all tips"
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "OK"
-          schema:
-            type: "object"
-            properties:
-              tips:
-                type: "array"
-                items:
-                  $ref: "#/definitions/TableTip"
-            example:
-              tips:
-                - amount: 5
-                  id_user: 1
-                  id_restaurantTable: 1
-                  id_service: 1
-                - amount: 10
-                  id_user: 2
-                  id_restaurantTable: 2
-                  id_service: 2
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-    post:
-      tags:
-        - "Tips"
-      summary: "Create a new tip"
-      consumes:
-        - "application/json"
-      parameters:
-        - name: "body"
-          in: "body"
-          description: "Tip object that needs to be added to the system"
-          required: true
-          schema:
-            $ref: "#/definitions/TableTip"
-      produces:
-        - "application/json"
-      responses:
-        "201":
-          description: "Created"
-          schema:
-            type: "object"
-            properties:
-              tabletip:
-                $ref: "#/definitions/TableTip"
-            example:
-              tabletip:
-                amount: 5
-                id_user: 1
-                id_restaurantTable: 1
-                id_service: 1
-        "400":
-          description: "Bad Request"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Bad Request"
-        "404":
-          description: "Not Found"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Restaurant table not found"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-  /tips/{id}:
-    get:
-      tags:
-        - "
-        - $ref: "#/parameters/tipIdParam"
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "OK"
-          schema:
-            type: "object"
-            properties:
-              tip:
-                $ref: "#/definitions/TableTip"
-            example:
-              tip:
-                amount: 5
-                id_user: 1
-                id_restaurantTable: 1
-                id_service: 1
-        "404":
-          description: "Not Found"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Tip not found"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-    put:
-      tags:
-        - "Tips"
-      summary: "Update a tip by ID"
-      consumes:
-        - "application/json"
-      parameters:
-        - $ref: "#/parameters/tipIdParam"
-        - name: "body"
-          in: "body"
-          description: "Tip object that needs to be updated"
-          required: true
-          schema:
-            $ref: "#/definitions/TableTip"
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "OK"
-          schema:
-            type: "object"
-            properties:
-              tip:
-                $ref: "#/definitions/TableTip"
-            example:
-              tip:
-                amount: 10
-                id_user: 2
-                id_restaurantTable: 2
-                id_service: 2
-        "400":
-          description: "Bad Request"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Bad Request"
-        "404":
-          description: "Not Found"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Tip not found"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-    delete:
-      tags:
-        - "Tips"
-      summary: "Delete a tip by ID"
-      parameters:
-        - $ref: "#/parameters/tipIdParam"
-      produces:
-        - "application/json"
-      responses:
-        "204":
-          description: "No Content"
-          schema:
-            type: "object"
-            properties:
-              message:
-                type: "string"
-            example:
-              message: "Tip deleted"
-        "404":
-          description: "Not Found"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Tip not found"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-  /tables:
-    post:
-      tags:
-        - "Tables"
-      summary: "Create a new restaurant table"
-      consumes:
-        - "application/json"
-      parameters:
-        - name: "body"
-          in: "body"
-          description: "Table object that needs to be added to the system"
-          required: true
-          schema:
-            $ref: "#/definitions/RestaurantTable"
-      produces:
-        - "application/json"
-      responses:
-       
-        "201":
-          description: "Created"
-          schema:
-            type: "object"
-            properties:
-              table:
-                $ref: "#/definitions/RestaurantTable"
-            example:
-              table:
-                id: 3
-                name: "Table 3"
-        "400":
-          description: "Bad Request"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Bad Request"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-  /users:
-    get:
-      tags:
-        - "Users"
-      summary: "Get all users"
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "OK"
-          schema:
-            type: "object"
-            properties:
-              users:
-                type: "array"
-                items:
-                  $ref: "#/definitions/User"
-            example:
-              users:
-                - id: 1
-                  firstname: "John"
-                  lastname: "Doe"
-                  status: "manager"
-                  active: true
-                - id: 2
-                  firstname: "Jane"
-                  lastname: "Doe"
-                  status: "waiter"
-                  active: true
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-    post:
-      tags:
-        - "Users"
-      summary: "Create a new user"
-      consumes:
-        - "application/json"
-      parameters:
-        - name: "body"
-          in: "body"
-          description: "User object that needs to be added to the system"
-          required: true
-          schema:
-            $ref: "#/definitions/User"
-      produces:
-        - "application/json"
-      responses:
-        "201":
-          description: "Created"
-          schema:
-            type: "object"
-            properties:
-              user:
-                $ref: "#/definitions/User"
-            example:
-              user:
-                id: 3
-                firstname: "Alice"
-                lastname: "Smith"
-                status: "waiter"
-                active: true
-        "400":
-          description: "Bad Request"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Bad Request"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
-  /users/{id}:
-    parameters:
-      - $ref: "#/parameters/userIdParam"
-    get:
-      tags:
-        - "Users"
-      summary: "Get a user by ID"
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "OK"
-          schema:
-            type: "object"
-            properties:
-              user:
-                $ref: "#/definitions/User"
-            example:
-              user:
-                id: 1
-                firstname: "John"
-                lastname: "Doe"
-                status: "manager"
-                active: true
-        "404":
-          description: "Not Found"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "User not found"
-        "500":
-          description: "Internal Server Error
-      tags:
-        - "Table Tips"
-      summary: "Create a table"
-      consumes:
-        - "application/json"
-      parameters:
-        - name: "body"
-          in: "body"
-          description: "Table object that needs to be added to the system"
-          required: true
-          schema:
-            type: "object"
-            properties:
-              name:
-                type: "string"
-            example:
-              name: "Table 1"
-      produces:
-        - "application/json"
-      responses:
-        "201":
-          description: "Created"
-          schema:
-            type: "object"
-            properties:
-              table:
-                $ref: "#/definitions/RestaurantTable"
-            example:
-              table:
-                id: 1
-                name: "Table 1"
-        "400":
-          description: "Bad Request"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Bad Request"
-        "500":
-          description: "Internal Server Error"
-          schema:
-            type: "object"
-            properties:
-              error:
-                type: "string"
-            example:
-              error: "Internal Server Error"
+/* SWAGGER ADMIN */
 
-parameters:
-  userIdParam:
-    name: "id"
-    in: "path"
-    description: "ID of user to return"
-    required: true
-    type: "integer"
-    format: "int64"
-    example: 1
-  tipIdParam:
-    name: "id"
-    in: "path"
-    description: "ID of tip to return"
-    required: true
-    type: "integer"
-    format: "int64"
-    example: 1
+/**
+ * @swagger
+ * /admin:
+ *  post:
+ *      summary: Se connecter à l'interface administrateur
+ *      description: Utilisé pour se connecter à l'interface administrateur en utilisant un pincode valide.
+ *      parameters:
+ *        - in: body
+ *          name: pincode
+ *          description: Le pincode pour se connecter.
+ *          required: true
+ *          schema:
+ *            type: object
+ *            properties:
+ *              pincode:
+ *                type: string
+ *                description: Le pincode pour se connecter.
+ *                example: "1234"
+ *      responses:
+ *          '200':
+ *              description: Connexion réussie.
+ *          '404':
+ *              description: Pincode invalide.
+
+/* SWAGGER USER */
+
+/**
+ * @swagger
+ * paths:
+ *  /user:
+ *    get:
+ *      summary: Récupérer tous les utilisateurs
+ *      description: Récupère tous les utilisateurs existants.
+ *      responses:
+ *          '200':
+ *              description: Requête réussie.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/components/schemas/User'
+ *          '500':
+ *              description: Erreur serveur lors de la récupération des utilisateurs.
+
+/**
+ * @swagger
+ * paths:
+ *  /user/{id}:
+ *    get:
+ *      summary: Récupérer un utilisateur par ID
+ *      description: Récupère un utilisateur en utilisant son ID.
+ *      parameters:
+ *         - in: path
+ *           name: id
+ *           type: integer
+ *           required: true
+ *           description: ID de l'utilisateur à récupérer.
+ *      responses:
+ *         '200':
+ *            description: Requête réussie.
+ *            content:
+ *                application/json:
+ *                    schema:
+ *                        $ref: '#/components/schemas/User'
+ *         '500':
+ *           description: Erreur serveur lors de la récupération de l'utilisateur.
+ *         '404':
+ *           description: Utilisateur non trouvé.
+
+/**
+ * @swagger
+ * /user:
+ *   post:
+ *     summary: Créer un nouvel utilisateur
+ *     description: Crée un nouvel utilisateur en utilisant les informations fournies.
+ *     requestBody:
+ *       description: Informations sur le nouvel utilisateur.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/NewUser'
+ *     responses:
+ *       '200':
+ *         description: Nouvel utilisateur créé avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID de l'utilisateur créé.
+ *                   example: 1
+ *       '500':
+ *         description: Erreur serveur lors de la création du nouvel utilisateur.
 
 
+ /* SWAGGER TIPS */
+
+/**
+ * @swagger
+ * paths:
+ *  /tips:
+ *   get:
+ *    summary: Récupérer tous les tips
+ *    description: Récupère tous les tips
+ *    responses:
+ *     '200':
+ *      description: A successful response
+ *     '500':
+ *      description: Erreur de serveur lors de la récupération des tips
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /tips/{id}:
+ *    get:
+ *      summary: Récupérer un tip par ID
+ *      description: Récupère un tip par son ID
+ *      parameters:
+ *         - in: path
+ *           name: id
+ *           type: integer
+ *           required: true
+ *           description: ID du tip
+ *      responses:
+ *         '200':
+ *            description: A successful response
+ *         '500':
+ *           description: Erreur de serveur lors de la récupération du tip
+ *         '404':
+ *           description: Tip non trouvé
+ */
+
+/**
+ * @swagger
+ * /tips:
+ *   post:
+ *     summary: Créer un nouveau tip
+ *     description: Crée un nouveau tip avec les informations fournies
+ *     parameters:
+ *       - in: body
+ *         name: tip
+ *         description: Les informations du nouveau tip.
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             title:
+ *               type: string
+ *             description:
+ *               type: string
+ *             amount:
+ *               type: integer
+ *     responses:
+ *       200:
+ *         description: ID du nouveau tip créé avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID du nouveau tip.
+ *                   example: 1
+ *       500:
+ *         description: Erreur de serveur lors de la création du nouveau tip.
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /tips/{id}:
+ *   put:
+ *      summary: Mettre à jour un tip
+ *      description: Mettre à jour un tip avec les nouvelles informations fournies
+ *      parameters:
+ *         - in: path
+ *           name: id
+ *           type: integer
+ *           required: true
+ *           description: ID du tip
+ *         - in: body
+ *           name: tip
+ *           description: Objet tip contenant les nouvelles informations à mettre à jour
+ *           required: true
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               amount:
+ *                 type: integer
+ *      responses:
+ *         '200':
+ *            description: A successful response
+ *         '500':
+ *            description: Erreur de serveur lors de la mise à jour du tip
+ *         '404':
+ *            description: Tip non trouvé
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /api/tips/{id}:
+ *    delete:
+ *      summary: Supprimer un tip
+ *      description: Supprimer un tip par son ID.
+ *      tags:
+ *        - Tips
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          description: ID du tip à supprimer.
+ *          schema:
+ *            type: integer
+ *      responses:
+ *        '200':
+ *          description: Le tip a été supprimé avec succès.
+ *        '404':
+ *          description: Aucun tip trouvé avec cet ID.
+ *        '500':
+ *          description: Erreur de serveur lors de la suppression du tip.
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /tips/create-table:
+ *    post:
+ *      summary: Créer une nouvelle table de tips.
+ *      description: Crée une nouvelle table de tips avec un nom donné.
+ *      parameters:
+ *        - in: body
+ *          name: name
+ *          description: Le nom de la nouvelle table de tips.
+ *          required: true
+ *          schema:
+ *            type: object
+ *            properties:
+ *              name:
+ *                type: string
+ *      responses:
+ *        200:
+ *          description: ID de la nouvelle table de tips créée avec succès.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  id:
+ *                    type: integer
+ *                    description: ID de la nouvelle table de tips.
+ *                    example: 1
+ *        500:
+ *          description: Erreur de serveur lors de la création de la nouvelle table de tips.
+ */
+
+
+/* SWAGGER TIPSPAYMENT */
+
+/**
+ * @swagger
+ * paths:
+ *  /tipspayment:
+ *   post:
+ *    summary: Créer un tips payment
+ *    parameters:
+ *     - name: id_user
+ *       in: body
+ *       description: ID de l'utilisateur
+ *       required: true
+ *       schema:
+ *          type: object
+ *          properties:
+ *             id_user:
+ *              type: integer
+ *              description: ID de l'utilisateur
+ *              example: 1
+ *             amount:
+ *                type: integer
+ *                description: Montant du tips
+ *                example: 10
+ * 
+ *    responses:
+ *     '200':
+ *         description: ID du tips payment créé avec succès
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /tipspayment/{id}:
+ *      get:
+ *        summary: Récupérer un tips payment
+ *        description: Récupérer un tips payment par son ID
+ *        parameters:
+ *          - in: path
+ *            name: id
+ *            type: integer
+ *            required: true
+ *            description: ID du tips payment
+ *        responses:
+ *         '200':
+ *           description: Objet tips payment retourné avec succès
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: ID du tips payment
+ *                   id_user:
+ *                     type: integer
+ *                     description: ID de l'utilisateur associé au tips payment
+ *                   amount:
+ *                     type: integer
+ *                     description: Montant du tips payment
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Date de création du tips payment
+ *         '404':
+ *           description: Tips payment non trouvé
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /tipspayment:
+ *   get:
+ *    summary: Tout les pourboires versés
+ *    description: Récupère tout les pourboires versés
+ *    responses:
+ *     '200':
+ *      description: Liste de tous les tips payments retournée avec succès
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                id:
+ *                  type: integer
+ *                  description: ID du tips payment
+ *                id_user:
+ *                  type: integer
+ *                  description: ID de l'utilisateur associé au tips payment
+ *                amount:
+ *                  type: integer
+ *                  description: Montant du tips payment
+ *                created_at:
+ *                  type: string
+ *                  format: date-time
+ *                  description: Date de création du tips payment
+ *     '500':
+ *      description: Erreur de serveur lors de la récupération des tips payments
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /tipspayment/{id}:
+ *   put:
+ *      summary: Mettre à jour un tips payment
+ *      description: Mettre à jour un tips payment par son ID
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          type: integer
+ *          required: true
+ *          description: ID du tips payment
+ *        - in: body
+ *          name: tips payment
+ *          description: Objet tips payment contenant les nouvelles informations à mettre à
+        - in: body
+          name: tips payment
+          description: Objet tips payment contenant les nouvelles informations à mettre à jour
+          required: true
+          schema:
+            type: object
+            properties:
+              id_user:
+                type: integer
+                description: ID de l'utilisateur
+                example: 1
+              amount:
+                type: integer
+                description: Montant du tips
+                example: 20
+        responses:
+          '200':
+            description: Tips payment mis à jour avec succès
+          '500':
+            description: Erreur de serveur lors de la mise à jour du tips payment
+          '404':
+            description: Tips payment non trouvé
+
+/* SWAGGER SERVICE */
+
+/**
+ * @swagger
+ * paths:
+ *  /service:
+ *    get:
+ *      description: Récupérer tous les services
+ *      responses:
+ *        '200':
+ *          description: A successful response
+ *        '500':
+ *          description: Erreur de serveur lors de la récupération des services
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /service/{id}:
+ *    get:
+ *      description: Récupérer un service par ID
+ *      parameters:
+ *         - in: path
+ *           name: id
+ *           type: integer
+ *           required: true
+ *           description: ID du service
+ *      responses:
+ *        '200':
+ *          description: A successful response
+ *        '500':
+ *          description: Erreur de serveur lors de la récupération du service
+ *        '404':
+ *          description: Service non trouvé
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /service:
+ *   post:
+ *     summary: Créer un nouveau service
+ *     description: Créer un nouveau service
+ *     parameters:
+ *       - in: body
+ *         name: service
+ *         description: Les informations du service.
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             name:
+ *               type: string
+ *             description:
+ *               type: string
+ *             active:
+ *               type: boolean
+ *     responses:
+ *       200:
+ *         description: ID du nouveau service créé avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID du nouveau service.
+ *                   example: 1
+ *       500:
+ *         description: Erreur de serveur lors de la création du nouveau service.
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /service/{id}:
+ *    put:
+ *      summary: Mettre à jour un service
+ *      description: Mettre à jour un service
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          type: integer
+ *          required: true
+ *          description: ID du service
+ *        - in: body
+ *          name: service
+ *          description: Objet service contenant les nouvelles informations à mettre à jour.
+ *          required: true
+ *          schema:
+ *            type: object
+ *            properties:
+ *              name:
+ *                type: string
+ *              description:
+ *                type: string
+ *              active:
+ *                type: boolean
+ *      responses:
+ *        '200':
+ *          description: A successful response
+ *        '500':
+ *          description: Erreur de serveur lors de la mise à jour du service
+ *        '404':
+ *          description: Service non trouvé
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /service/{id}:
+ *    delete:
+ *      description: Supprimer un service
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          type: integer
+ *          required: true
+ *          description: ID du service
+ *      responses:
+ *        '200':
+ *          description: Service supprimé avec succès
+ *        '500':
+ *          description: Erreur de serveur lors de la suppression du service
+ *        '404':
+ *          description: Service non trouvé
+ */
+
+/* SWAGGER SERVICEUSER */
+
+/**
+ * @swagger
+ * paths:
+ *  /serviceUser:
+ *   get:
+ *    summary: Tout les services pour un user
+ *    description: Récupère tout les services pour un user
+ *    parameters:
+ *       - in: query
+ *         name: id_user
+ *         type: integer
+ *         required: true
+ *         description: id of the user
+ *    responses:
+ *     '200':
+ *          description: A successful response
+ *     '500':
+ *          description: Erreur de serveur lors de la récupération des services
+ *     '404':
+ *         description: Aucun service trouvé pour cet utilisateur
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /serviceUser/assign:
+ *   post:
+ *     summary: Ajouter un service pour un user
+ *     description: Ajouter un service pour un user
+ *     parameters:
+ *       - in: body
+ *         name: service_user
+ *         description: Objet service user contenant les informations à ajouter
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *              id_user:
+ *                  type: integer
+ *                  description: ID de l'utilisateur
+ *                  example: 1
+ *              id_service:
+ *                  type: integer
+ *                  description: ID du service
+ *                  example: 1
+ *              start_date:
+ *                  type: string
+ *                  format: date-time
+ *                  description: Date de début du service
+ *                  example: '2022-04-01T08:00:00.000Z'
+ *              end_date:
+ *                  type: string
+ *                  format: date-time
+ *                  description: Date de fin du service
+ *                  example: '2022-04-01T16:00:00.000Z'
+ *     responses:
+ *       '200':
+ *          description: Service ajouté avec succès
+ *       '500':
+ *          description: Erreur de serveur lors de l'ajout du service
+ */
+
+/* SWAGGER STATS */
+
+/**
+ * @swagger
+ * paths:
+ *  /api/stats:
+ *   get:
+ *    summary: Total des pourboires versés pour le mois en cours
+ *    description: Récupère le total des pourboires versés pour le mois en cours
+ *    responses:
+ *     '200':
+ *       description: Total des pourboires versés pour le mois en cours récupéré avec succès
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               tips_total:
+ *                 type: number
+ *                 description: Total des pourboires versés pour le mois en cours
+ *                 example: 100
+ *     '500':
+ *      description: Erreur de serveur lors de la récupération du total des pourboires versés pour le mois en cours
+ */
