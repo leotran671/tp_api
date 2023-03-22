@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createTipsPayment, getTipsPaymentById, updateTipsPaymentById, deleteTipsPaymentById } = require('../controllers/tipsPayments');
+const { createTipsPayment, getTipsPaymentById, updateTipsPaymentById, deleteTipsPaymentById } = require('../controllers/tipsPaymentsController');
 
 router.post("/", createTipsPayment);
 router.get("/:id", getTipsPaymentById);
