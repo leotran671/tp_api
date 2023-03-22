@@ -36,5 +36,5 @@ const assignServiceToUser = async (req, res) => {
 
 module.exports = {
     getServicesUsers,
-    assignServiceToUser,
+    assignServiceToUser
 };
