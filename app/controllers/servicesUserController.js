@@ -34,22 +34,7 @@ const assignServiceToUser = async (req, res) => {
     }
 };
 
-const deleteServiceUser = async (req, res) => {
-    const { id_service, id_user } = req.params;
-    try {
-        const serviceUser = await ServiceUser.findByPk(id_service, id_user);
-        if (!serviceUser) {
-            return res.status(404).json({ error: 'ServiceUser not found' });
-        }
-        await serviceUser.destroy();
-        res.status(200).json({ message: 'ServiceUser deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ error: 'Error deleting serviceUser', details: error.message });
-    }
-};
-
 module.exports = {
     getServicesUsers,
     assignServiceToUser,
-    deleteServiceUser
 };
