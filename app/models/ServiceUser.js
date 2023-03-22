@@ -14,7 +14,8 @@ ServiceUser.init(
     },
     {
         sequelize,
-        modelName: "serviceusers"
+        modelName: "serviceusers",
+        timestamps: false
     }
 );
 ServiceUser.associate = (models) => {
