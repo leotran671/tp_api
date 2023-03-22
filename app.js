@@ -9,6 +9,7 @@ const tipsRoutes = require('./app/routes/tipsRoutes');
 const userRoutes = require('./app/routes/userRoutes');
 const servicesUserRoutes = require('./app/routes/servicesUserRoutes');
 const tipsPaymentRoutes = require('./app/routes/tipsPaymentsRoutes');
+const statsRoutes = require('./app/routes/statsRoutes');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/api/tips', tipsRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/serviceUser', servicesUserRoutes);
 app.use('/api/tipsPayment', tipsPaymentRoutes);
+app.use('/api/stats', statsRoutes)
 
 const port = process.env.PORT || 3000;
 
